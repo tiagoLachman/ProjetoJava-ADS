@@ -1,17 +1,22 @@
 package controller;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 import model.Usuario;
 
-public class UsuarioController {
+public class UsuarioController implements Serializable {
+    private static final long serialVersionUID = 6470090944414208497L;
+
     public List<Usuario> listaUsuarios = new ArrayList<>();
 
     public int cadastrar(Usuario usuario) {
+        
         if (usuario == null) {
             return -1;
         }
+        
         this.listaUsuarios.add(usuario);
         return this.listaUsuarios.size() - 1;
     }
