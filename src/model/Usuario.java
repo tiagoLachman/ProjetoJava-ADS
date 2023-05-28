@@ -1,8 +1,6 @@
 package model;
 
-import java.io.Serializable;
-
-public class Usuario extends Pessoa implements Serializable {
+public class Usuario extends Pessoa {
     private String email;
     private String senha;
 
@@ -26,6 +24,15 @@ public class Usuario extends Pessoa implements Serializable {
 
     public void setSenha(String senha) {
         this.senha = senha;
+    }
+
+    @Override
+    public String toString() {
+        return "Usuario [" +
+                "nome=" + super.getNome() +
+                ", email=" + email +
+                ", idade=" + super.getIdade() +
+                "]";
     }
 
 }

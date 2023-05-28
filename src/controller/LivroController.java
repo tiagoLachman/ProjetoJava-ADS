@@ -38,6 +38,12 @@ public class LivroController implements Serializable {
         return livro_achado;
     }
 
+    public void atualizarNumEmprestimo(int codLivro) {
+        Livro livro = buscar(codLivro);
+        int num = livro.getNumero_de_emprestimos();
+        livro.setNumero_de_emprestimos(num + 1);
+    }
+
     public Livro buscar(Livro livro) {
         String titulo = livro.getTitulo();
         String autor = livro.getAutor();
@@ -45,10 +51,10 @@ public class LivroController implements Serializable {
         Categoria categoria = livro.getCategoria();
 
         for (Livro li : this.listaLivros) {
-            if ((li.getTitulo() == titulo || titulo == null) &&
-                    (li.getAutor() == autor || autor == null) &&
+            if ((li.getTitulo().equals(titulo) || titulo == null) &&
+                    (li.getAutor().equals(autor) || autor == null) &&
                     (li.getAno_publicacao() == ano_publicacao || ano_publicacao == -1) &&
-                    (li.getCategoria() == categoria || categoria == null)) {
+                    (li.getCategoria().equals(categoria) || categoria == null)) {
                 return li;
             }
         }

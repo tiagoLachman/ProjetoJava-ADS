@@ -7,16 +7,16 @@ import java.util.List;
 import model.Usuario;
 
 public class UsuarioController implements Serializable {
-    private static final long serialVersionUID = 6470090944414208497L;
+    private static final long serialVersionUID = 6470110944414208127L;
 
     public List<Usuario> listaUsuarios = new ArrayList<>();
 
     public int cadastrar(Usuario usuario) {
-        
+
         if (usuario == null) {
             return -1;
         }
-        
+
         this.listaUsuarios.add(usuario);
         return this.listaUsuarios.size() - 1;
     }
@@ -34,9 +34,11 @@ public class UsuarioController implements Serializable {
     public Usuario buscar(Usuario usuario) {
         String email = usuario.getEmail();
         String nome = usuario.getNome();
+
         for (Usuario user : this.listaUsuarios) {
-            if ((user.getEmail() == email || email == null) &&
-                    (user.getNome() == nome || nome == null)) {
+
+            if ((user.getEmail().equals(email) || email == null) &&
+                    (user.getNome().equals(nome) || nome == null)) {
                 return user;
             }
         }

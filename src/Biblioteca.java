@@ -1,10 +1,10 @@
-import java.util.ArrayList;
-import java.util.List;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 import controller.LivroController;
+import controller.LogController;
 import controller.SerialController;
 import controller.UsuarioController;
-import model.Categoria;
 import model.Livro;
 import model.Usuario;
 
@@ -16,9 +16,12 @@ public class Biblioteca {
     LivroController livroController;
     UsuarioController usuarioController;
 
-    Map<Integer, Integer> listaEmprestados = new HashMap<>();
+    Map<Integer, Map<String, String>> listaEmprestados;
 
-    private final String path = "./data";
+    LogController log;
+
+    private final String pathData = "./data";
+    private final String pathLog = "./log";
 
     public Biblioteca() {
         carregar();
@@ -26,11 +29,17 @@ public class Biblioteca {
 
     private void carregar() {
         try {
-            livroController = (LivroController) serial.deserializar(path + "/livro");
+            livroController = (LivroController) serial.deserializar(pathData + "/livro");
             livroController = livroController == null ? new LivroController() : livroController;
 
-            usuarioController = (UsuarioController) serial.deserializar(path + "/usuario");
+            usuarioController = (UsuarioController) serial.deserializar(pathData + "/usuario");
             usuarioController = usuarioController == null ? new UsuarioController() : usuarioController;
+
+            listaEmprestados = (HashMap<Integer, Map<String, String>>) serial.deserializar(pathData + "/listaEmprestimos");
+            listaEmprestados = listaEmprestados == null ? new HashMap<Integer, Map<String, String>>() : listaEmprestados;
+
+            log = (LogController) serial.deserializar(pathLog + "/log");
+            log = log == null ? new LogController() : log;
 
         } catch (Exception e) {
             System.out.println("Deu erro:" + e);
@@ -39,55 +48,123 @@ public class Biblioteca {
 
     private void salvar() {
         try {
-            serial.serializar(path + "/livro", livroController);
-            serial.serializar(path + "/usuario", usuarioController);
+            serial.serializar(pathData + "/livro", livroController);
+            serial.serializar(pathData + "/usuario", usuarioController);
+            serial.serializar(pathData + "/listaEmprestimos", listaEmprestados);
+
+            serial.serializar(pathLog + "/log", log);
+
         } catch (Exception e) {
             System.out.println("Deu erro:" + e);
         }
     }
 
     public boolean cadastrarLivro(Livro livro) {
+        String horaReq = getHorario();
         boolean status = livroController.cadastrar(livro) >= 0;
+        String res = status ? "true" : "false";
+
+        log.gerarLog(horaReq + " RETORNOU: " + res + " / cadastrarLivro / " + livro);
         salvar();
         return status;
     }
 
-    public boolean emprestarLivro(int codLivro, int codUsuario) {
+    public boolean cadastrarUsuario(Usuario usuario) {
+        String horaReq = getHorario();
+        boolean status = usuarioController.cadastrar(usuario) >= 0;
+        String res = status ? "true" : "false";
+
+        log.gerarLog(horaReq + " RETORNOU: " + res + " / cadastrarUsuario / " + usuario);
+        salvar();
+        return status;
+    }
+
+    public String emprestarLivro(int codLivro, int codUsuario) {
+        String horaReq = getHorario();
+
+        String res = "Emprestado com sucesso";
         Usuario user = usuarioController.buscar(codUsuario);
         Livro livro = livroController.buscar(codLivro);
 
         if (user == null || livro == null) {
-            return false;
+            res = "Usuario ou livro não encontrados";
+            log.gerarLog(horaReq + " RETORNOU: " + res + " / emprestarLivro / " + user + " / " + livro);
+            return res;
+        }
+
+        if (getEmprestimoUsuario(codUsuario) >= 0) {
+            res = "O usuario já tem um livro emprestado";
+            log.gerarLog(horaReq + " RETORNOU: " + res + " / emprestarLivro / " + user + " / " + livro);
+            return res;
         }
 
         int num = livroController.buscar(codLivro).getNum_exemplares();
         if (num <= 0) {
-            return false;
+            res = "Não há exemplares para emprestar";
+            log.gerarLog(horaReq + " RETORNOU: " + res + " / emprestarLivro / " + user + " / " + livro);
+            return res;
         }
 
         livroController.buscar(codLivro).setNum_exemplares(num - 1);
-        this.listaEmprestados.put(codUsuario, codLivro);
+        Map<String, String> temp = new HashMap<>();
+        temp.put("IdLivro", Integer.toString(codLivro));
+        temp.put("DataEmprestado", horaReq);
+        temp.put("DataPrevisao", getHorario(7));
+
+        this.listaEmprestados.put(codUsuario, temp);
+
+        log.gerarLog(horaReq + " RETORNOU: " + res + " / emprestarLivro / " + user + " / " + livro);
         salvar();
-        return true;
+        return res;
     }
 
-    public boolean cadastrarUsuario(Usuario usuario) {
-        boolean status = usuarioController.cadastrar(usuario) >= 0;
+    public String retornarLivro(int codLivro, int codUsuario) {
+        String horaReq = getHorario();
+
+        String res = "Livro retornado com sucesso.";
+        Usuario user = usuarioController.buscar(codUsuario);
+        Livro livro = livroController.buscar(codLivro);
+
+        if (user == null || livro == null) {
+            res = "Usuario ou livro não encontrados";
+            log.gerarLog(horaReq + " RETORNOU: " + res + " / retornarLivro / " + user + " / " + livro);
+            return res;
+        }
+
+        if (this.listaEmprestados.get(codUsuario) == null) {
+            res = "Este usuario não tem nenhum livro emprestado.";
+            log.gerarLog(horaReq + " RETORNOU: " + res + " / retornarLivro / " + user + " / " + livro);
+            return res;
+        }
+
+        int num = livroController.buscar(codLivro).getNum_exemplares();
+        livroController.buscar(codLivro).setNum_exemplares(num + 1);
+        this.listaEmprestados.remove(codUsuario);
+
+        log.gerarLog(horaReq + " RETORNOU: " + res + " / retornarLivro / " + user + " / " + livro);
         salvar();
-        return status;
+        return res;
     }
 
-    public boolean retornarLivro(int codLivro, int codUsuario) {
+    public int verExemplares(int codLivro) {
+        return livroController.buscar(codLivro).getNum_exemplares();
+    }
 
-        // System.out.println(this.listaEmprestados.get(codLivro));
-        // if(this.listaEmprestados.get(codUsuario) == null) return false;
+    public String logs() {
+        return log.toString();
+    }
 
-        // int num = livroController.buscar(codLivro).getNum_exemplares();
-        // livroController.buscar(codLivro).setNum_exemplares(num + 1);
-        // this.listaEmprestados.remove(codUsuario);
+    private String getHorario() {
+        return LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss"));
+    }
 
-        salvar();
-        return true;
+    private String getHorario(long dias) {
+        return LocalDateTime.now().plusDays(dias).format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss"));
+    }
+
+    public int getEmprestimoUsuario(int codUsuario) {
+        Integer res = Integer.parseInt(this.listaEmprestados.get(codUsuario).get("IdLivro"));
+        return res == null ? -1 : res;
     }
 
 }
