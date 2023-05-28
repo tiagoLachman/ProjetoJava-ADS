@@ -1,6 +1,8 @@
 package model;
 
-public class Usuario extends Pessoa {
+import java.io.Serializable;
+
+public class Usuario extends Pessoa implements Serializable {
     private String email;
     private String senha;
 
