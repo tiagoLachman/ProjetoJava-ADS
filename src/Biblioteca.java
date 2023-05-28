@@ -47,7 +47,9 @@ public class Biblioteca {
     }
 
     public boolean cadastrarLivro(Livro livro) {
-        return livroController.cadastrar(livro) >= 0;
+        boolean status = livroController.cadastrar(livro) >= 0;
+        salvar();
+        return status;
     }
 
     public boolean emprestarLivro(int codLivro, int codUsuario) {
@@ -57,7 +59,7 @@ public class Biblioteca {
         if (user == null || livro == null) {
             return false;
         }
-        
+
         int num = livroController.buscar(codLivro).getNum_exemplares();
         if (num <= 0) {
             return false;
@@ -65,11 +67,14 @@ public class Biblioteca {
 
         livroController.buscar(codLivro).setNum_exemplares(num - 1);
         this.listaEmprestados.put(codUsuario, codLivro);
+        salvar();
         return true;
     }
 
     public boolean cadastrarUsuario(Usuario usuario) {
-        return usuarioController.cadastrar(usuario) >= 0;
+        boolean status = usuarioController.cadastrar(usuario) >= 0;
+        salvar();
+        return status;
     }
 
     public boolean retornarLivro(int codLivro, int codUsuario) {
@@ -81,6 +86,7 @@ public class Biblioteca {
         // livroController.buscar(codLivro).setNum_exemplares(num + 1);
         // this.listaEmprestados.remove(codUsuario);
 
+        salvar();
         return true;
     }
 
