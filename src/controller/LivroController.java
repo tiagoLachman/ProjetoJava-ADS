@@ -44,6 +44,18 @@ public class LivroController implements Serializable {
         livro.setNumero_de_emprestimos(num + 1);
     }
 
+    public Livro pegarMaisPopular(){
+        Livro res = null;
+        int maior = 0;
+        for (Livro livro : listaLivros) {
+            if(maior <= livro.getNumero_de_emprestimos()){
+                res = livro;
+                maior = livro.getNumero_de_emprestimos();
+            }
+        }
+        return res;
+    }
+
     public Livro buscar(Livro livro) {
         String titulo = livro.getTitulo();
         String autor = livro.getAutor();

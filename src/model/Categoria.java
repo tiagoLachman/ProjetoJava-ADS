@@ -7,5 +7,14 @@ public enum Categoria {
     Esoterismo,
     Esportes,
     Hobbies,
-    Sexualidade
+    Sexualidade;
+
+    @Override
+    public String toString() {
+        String res = "";
+        for (Categoria categoria : Categoria.values()) {
+            res = res.concat(categoria.toString() + "\n");
+        }
+        return res;
+    }
 }

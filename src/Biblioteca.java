@@ -1,3 +1,4 @@
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -5,11 +6,14 @@ import controller.LivroController;
 import controller.LogController;
 import controller.SerialController;
 import controller.UsuarioController;
+
 import model.Livro;
 import model.Usuario;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 public class Biblioteca {
     SerialController serial = new SerialController();
@@ -166,12 +170,42 @@ public class Biblioteca {
 
     public int getEmprestimoUsuario(int codUsuario) {
         Integer res;
-        try{
+        try {
             res = Integer.parseInt(this.listaEmprestados.get(codUsuario).get("IdLivro"));
-        }catch(Exception e){
+        } catch (Exception e) {
             res = -1;
         }
         return res;
     }
 
+    public String gerarRelatorio() {
+        String res = "Livros emprestados:\n";
+        for (Entry<Integer, Map<String, String>> entry : listaEmprestados.entrySet()) {
+            res = res.concat(entry.getValue().toString() + "\n");
+        }
+        res = res.concat("\nUsuarios atrasados:\n");
+        for (Entry<Integer, Map<String, String>> entry : listaEmprestados.entrySet()) {
+            SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+            Date dataAgora, dataEmprestado;
+            try {
+                dataEmprestado = formatter.parse(entry.getValue().get("DataPrevisao"));
+                dataAgora = formatter.parse(getHorario());
+            } catch (Exception e) {
+                dataAgora = null;
+                dataEmprestado = null;
+            }
+            int temp = dataAgora.compareTo(dataEmprestado);
+            if (temp >= 0) {
+                res = res.concat(usuarioController.buscar(entry.getKey()).getNome() + "\n");
+            }
+        }
+        res = res.concat("\nLivro mais popular:\n");
+        Livro livro = livroController.pegarMaisPopular();
+        if (livro != null) {
+            res = res.concat(livro.getTitulo());
+        } else {
+            res = res.concat("Não há nenhum livro popular");
+        }
+        return res;
+    }
 }

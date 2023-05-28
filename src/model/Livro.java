@@ -9,6 +9,9 @@ public class Livro implements Serializable {
     private Categoria categoria;
     private int num_exemplares;
     private int numero_de_emprestimos;
+    
+    public Livro() {
+    }
 
     public Livro(String titulo, String autor, int ano_publicacao, Categoria categoria, int num_exemplares) {
         this.titulo = titulo;
