@@ -1,4 +1,5 @@
 data/*
+log/*
 
 # Compiled class file
 *.class
