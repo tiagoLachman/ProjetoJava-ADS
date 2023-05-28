@@ -34,5 +34,4 @@ public class Usuario extends Pessoa {
                 ", idade=" + super.getIdade() +
                 "]";
     }
-
 }

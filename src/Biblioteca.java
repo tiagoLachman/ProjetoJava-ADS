@@ -35,8 +35,10 @@ public class Biblioteca {
             usuarioController = (UsuarioController) serial.deserializar(pathData + "/usuario");
             usuarioController = usuarioController == null ? new UsuarioController() : usuarioController;
 
-            listaEmprestados = (HashMap<Integer, Map<String, String>>) serial.deserializar(pathData + "/listaEmprestimos");
-            listaEmprestados = listaEmprestados == null ? new HashMap<Integer, Map<String, String>>() : listaEmprestados;
+            listaEmprestados = (HashMap<Integer, Map<String, String>>) serial
+                    .deserializar(pathData + "/listaEmprestimos");
+            listaEmprestados = listaEmprestados == null ? new HashMap<Integer, Map<String, String>>()
+                    : listaEmprestados;
 
             log = (LogController) serial.deserializar(pathLog + "/log");
             log = log == null ? new LogController() : log;
@@ -163,8 +165,13 @@ public class Biblioteca {
     }
 
     public int getEmprestimoUsuario(int codUsuario) {
-        Integer res = Integer.parseInt(this.listaEmprestados.get(codUsuario).get("IdLivro"));
-        return res == null ? -1 : res;
+        Integer res;
+        try{
+            res = Integer.parseInt(this.listaEmprestados.get(codUsuario).get("IdLivro"));
+        }catch(Exception e){
+            res = -1;
+        }
+        return res;
     }
 
 }
