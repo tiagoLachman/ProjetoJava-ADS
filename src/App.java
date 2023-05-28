@@ -7,14 +7,22 @@ public abstract class App {
         Biblioteca biblioteca = new Biblioteca();
         Usuario usuario = new Usuario("Tiago", 22, "vaitekata", "tiago@gmail.com", "asdzcx");
         Livro livro = new Livro("Opa", "Tiago", 2023, Categoria.Culinaria, 1);
-        
+
+        System.out.println(biblioteca.listaEmprestados);
+        System.out.println(biblioteca.getEmprestimoUsuario(0));
+
         biblioteca.cadastrarUsuario(usuario);
         biblioteca.cadastrarLivro(livro);
-
-        System.out.println(biblioteca.emprestarLivro(0, 0));
-        System.out.println(biblioteca.retornarLivro(0, 0));
+    
+        // System.out.println(biblioteca.verExemplares(0));
+        // System.out.println(biblioteca.emprestarLivro(0, 0));
+        // System.out.println(biblioteca.retornarLivro(0, 0));
+        // System.out.println(biblioteca.logs());
+        // System.out.println(biblioteca.verExemplares(0));
+        
     }
 }
+
 // Livro livro_1 = new Livro("Opa", "Tiago", 2023, Categoria.Culinaria);
 // Livro livro_2 = new Livro("Ouriço", "Ju", 2012, Categoria.AutoAjuda);
 // Livro livro_3 = new Livro("Carros", "Kiwi", 2012, Categoria.Artesanato);
