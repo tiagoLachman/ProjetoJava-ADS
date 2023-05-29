@@ -11,10 +11,6 @@ public enum Categoria {
 
     @Override
     public String toString() {
-        String res = "";
-        for (Categoria categoria : Categoria.values()) {
-            res = res.concat(categoria.toString() + "\n");
-        }
-        return res;
+        return Categoria.values().toString();
     }
 }

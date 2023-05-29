@@ -9,9 +9,10 @@ public abstract class App {
         Categoria categoria;
         Biblioteca biblioteca = new Biblioteca();
 
-        int op;
+        int op, temp;
+        String temp_string;
         Scanner in = new Scanner(System.in);
-        String mensagemIncial = "\n\nBIBLIOTECA!!! \n\n" +
+        String mensagemIncial = "\n\nEsse negocio \n\n" +
                 "1- Cadastrar Livro \n" +
                 "2- Cadastrar Usuário \n" +
                 "3- Emprestar Livro \n" +
@@ -21,12 +22,11 @@ public abstract class App {
                 "7- Listar empréstimos \n" +
                 "8- Buscar Usuario \n" +
                 "9- Relatórios \n" +
-                "10- Log livros \n" +
-                "11- Log usuários \n" +
-                "12- Log Empréstimos \n" +
-                "0- Sair";
+                "10- Log \n" +
+                "0- Sair\n"+
+                "Opção: ";
         do {
-            System.out.println(mensagemIncial);
+            System.out.print(mensagemIncial);
             op = in.nextInt();
             in.nextLine();
 
@@ -39,70 +39,116 @@ public abstract class App {
 
                     System.out.print("Nome do autor: ");
                     livro.setAutor(in.nextLine());
-
-                    System.out.print("Generos:\n" +
-                            "Artesanato\n" +
-                            "AutoAjuda\n" +
-                            "Culinaria\n" +
-                            "Esoterismo\n" +
-                            "Esportes\n" +
-                            "Hobbies\n" +
-                            "Sexualidade\n Genero do livro: ");
-                    livro.setCategoria(Categoria.valueOf(in.nextLine()));
-
+                    try {
+                        System.out.print("Generos:\n" +
+                                "Artesanato\n" +
+                                "AutoAjuda\n" +
+                                "Culinaria\n" +
+                                "Esoterismo\n" +
+                                "Esportes\n" +
+                                "Hobbies\n" +
+                                "Sexualidade\n Genero do livro: ");
+                        livro.setCategoria(Categoria.valueOf(in.nextLine()));
+                    } catch (Exception e) {
+                        System.out.println("Essa categoria não existe");
+                        break;
+                    }
                     System.out.print("Ano: ");
-                    livro.setAno_publicacao(in.nextInt());
+                    try {
+                        livro.setAno_publicacao(in.nextInt());
+                    } catch (Exception e) {
+                        System.out.println("Tipo do dado informado invalido");
+                        in.nextLine();
+                        break;
+                    }
                     in.nextLine();
 
                     System.out.print("Numero exemplares: ");
                     livro.setNum_exemplares(in.nextInt());
                     in.nextLine();
-
-                    biblioteca.cadastrarLivro(livro);
+                    try {
+                        biblioteca.cadastrarLivro(livro);
+                    } catch (Exception e) {
+                        System.out.println("Não foi possivel cadastrar o livro");
+                        break;
+                    }
+                    System.out.println("Livro cadastrado com sucesso");
                     break;
 
                 case 2:
-                    Usuario usuario = new Usuario(mensagemIncial, op, mensagemIncial, mensagemIncial, mensagemIncial);
-                    
-                    System.out.print("Nome usuario: ");
+                    Usuario usuario = new Usuario();
+
+                    System.out.print("Nome: ");
                     usuario.setNome(in.nextLine());
 
+                    System.out.print("Email: ");
+                    usuario.setEmail(in.nextLine());
+
+                    System.out.println("Senha: ");
+                    usuario.setSenha(in.nextLine());
+
+                    System.out.println("Idade: ");
+                    usuario.setIdade(in.nextInt());
+                    in.nextLine();
+
+                    System.out.println("Endereço: ");
+                    usuario.setEndereco(in.nextLine());
+
+                    biblioteca.cadastrarUsuario(usuario);
                     break;
                 case 3:
+                    System.out.println("Id do livro: ");
+                    temp = in.nextInt();
+                    in.nextLine();
 
+                    System.out.println("Id do usuario: ");
+
+                    biblioteca.emprestarLivro(temp, in.nextInt());
+                    in.nextLine();
                     break;
                 case 4:
+                    System.out.println("Id do livro: ");
+                    temp = in.nextInt();
+                    in.nextLine();
+
+                    System.out.println("Id do usuario: ");
+
+                    biblioteca.retornarLivro(temp, in.nextInt());
+                    in.nextLine();
 
                     break;
                 case 5:
+                    System.out.println("Livros:\n");
 
+                    System.out.println(biblioteca.listarLivros());
                     break;
                 case 6:
-
+                    System.out.println("Usuarios:\n");
+                    System.out.println(biblioteca.listarUsuarios());
                     break;
                 case 7:
-
+                    System.out.println("Emprestimos:\n");
+                    System.out.println(biblioteca.listarEmprestimos());
                     break;
                 case 8:
+                    System.out.println("Nome do usuario:\n");
+                    temp_string = in.nextLine();
 
+                    System.out.println(biblioteca.buscarUsuario(temp_string));
                     break;
                 case 9:
-
+                    System.out.println("Relatorios:\n");
+                    System.out.println(biblioteca.gerarRelatorio());
                     break;
                 case 10:
+                    System.out.println("log:\n");
 
+                    System.out.println(biblioteca.logs());
                     break;
-                case 0:
 
+                default:
                     break;
-
             }
-
         } while (op != 0);
     }
 }
-
-// Livro livro_1 = new Livro("Opa", "Tiago", 2023, Categoria.Culinaria);
-// Livro livro_2 = new Livro("Ouriço", "Ju", 2012, Categoria.AutoAjuda);
-// Livro livro_3 = new Livro("Carros", "Kiwi", 2012, Categoria.Artesanato);
-// Livro livro_4 = new Livro("Pato", "Luiziane", 2010, Categoria.Sexualidade);

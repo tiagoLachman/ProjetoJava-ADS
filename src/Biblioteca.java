@@ -52,6 +52,12 @@ public class Biblioteca {
         }
     }
 
+    public Usuario buscarUsuario(String nome){
+        Usuario usuario = new Usuario();
+        usuario.setNome(nome);
+        return usuarioController.buscar(usuario);
+    }
+
     private void salvar() {
         try {
             serial.serializar(pathData + "/livro", livroController);
@@ -63,6 +69,22 @@ public class Biblioteca {
         } catch (Exception e) {
             System.out.println("Deu erro:" + e);
         }
+    }
+
+    public String listarLivros() {
+        return this.livroController.listarLivros();
+    }
+
+    public String listarUsuarios() {
+        return usuarioController.listarUsuarios();
+    }
+
+    public String listarEmprestimos(){
+        String res = "";
+        for (Entry<Integer, Map<String, String>> entry : listaEmprestados.entrySet()) {
+            res = res.concat(entry.getValue() + "\n");
+        }
+        return res;
     }
 
     public boolean cadastrarLivro(Livro livro) {
