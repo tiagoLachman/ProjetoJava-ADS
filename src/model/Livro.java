@@ -7,6 +7,7 @@ public class Livro implements Serializable {
     private String autor;
     private int ano_publicacao;
     private Categoria categoria;
+    
     private int num_exemplares;
     private int numero_de_emprestimos;
     

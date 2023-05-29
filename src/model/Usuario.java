@@ -4,6 +4,10 @@ public class Usuario extends Pessoa {
     private String email;
     private String senha;
 
+    public Usuario() {
+        super("", -1, "");
+    }
+
     public Usuario(String nome, int idade, String endereco, String email, String senha) {
         super(nome, idade, endereco);
         this.email = email;

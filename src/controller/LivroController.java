@@ -12,6 +12,15 @@ public class LivroController implements Serializable {
 
     private static final long serialVersionUID = 6470090944414208496L;
 
+    public String listarLivros(){
+        String res = "";
+        for (Livro livro : this.listaLivros) {
+            res = res.concat(livro.getTitulo()+"\n");
+        }
+        
+        return res;
+    }
+
     public boolean retirarExemplar(int cod) {
         int num = this.listaLivros.get(cod).getNum_exemplares();
         if (num <= 0)

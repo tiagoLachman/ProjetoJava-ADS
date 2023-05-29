@@ -11,6 +11,15 @@ public class UsuarioController implements Serializable {
 
     public List<Usuario> listaUsuarios = new ArrayList<>();
 
+    public String listarUsuarios() {
+        String res = "";
+        for (Usuario livro : listaUsuarios) {
+            res = res.concat(livro.getNome() + "\n");
+        }
+
+        return res;
+    }
+
     public int cadastrar(Usuario usuario) {
 
         if (usuario == null) {
