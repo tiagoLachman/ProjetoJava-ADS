@@ -133,7 +133,7 @@ public class Biblioteca {
             return res;
         }
 
-        livroController.buscar(codLivro).setNum_exemplares(num - 1);
+        livroController.retirarExemplar(codLivro);
         Map<String, String> temp = new HashMap<>();
         temp.put("IdLivro", Integer.toString(codLivro));
         temp.put("DataEmprestado", horaReq);

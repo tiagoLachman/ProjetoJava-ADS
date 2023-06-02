@@ -103,7 +103,7 @@ public abstract class App {
 
                     System.out.println("Id do usuario: ");
 
-                    biblioteca.emprestarLivro(temp, in.nextInt());
+                    System.out.println(biblioteca.emprestarLivro(temp, in.nextInt()));
                     in.nextLine();
                     break;
                 case 4:
